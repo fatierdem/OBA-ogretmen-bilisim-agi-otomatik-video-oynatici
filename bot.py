@@ -3,7 +3,6 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from time import sleep
 
-
 class Video:
     def __init__(self):
         self.driver = webdriver.Chrome()
@@ -14,14 +13,14 @@ class Video:
         self.driver.get("https://www.oba.gov.tr/")
         self.driver.maximize_window()
         sleep(4)
-        eDevlet = self.driver.find_element(By.XPATH,"//*[@id='bs-example-navbar-collapse-2']/ul/li[2]/a")
-        eDevlet.click()
+        mebbis = self.driver.find_element(By.XPATH,"//*[@id='bs-example-navbar-collapse-2']/ul/li[1]/a")
+        mebbis.click()
         sleep(4)
-        self.nickPs()
+        self.login()
         sleep(2)
-        self.urlİnp()
+        self.urlInput()
 
-    def urlİnp(self):
+    def urlInput(self):
         iUrl = self.urlPrint()
         self.urls.append(iUrl)
         while True:
@@ -33,11 +32,14 @@ class Video:
             elif ch == '2':
                 iUrl = self.urlPrint()
                 self.urls.append(iUrl)
+            else:
+                print("Yanlış bir değer girdiniz.")
+                continue
                 
     def urlPrint(self):
-        iUrl = input("Kursun başlangıç bölüm linkini ve izlemesi gerken bölüm sayısını gir: ")
+        iUrl = input("Kursun başlangıç bölüm linkini ve izlemesi gereken bölüm sayısını giriniz: ")
         iUrl = iUrl.split(" ")
-        print(f"Eğitim başlığı: {iUrl[0].split("/")[5]}\nBölüm sayısı: {iUrl[1]}")
+        print(f"Eğitim başlığı: {iUrl[0].split('/')[5]}\nBölüm sayısı: {iUrl[1]}")
         return iUrl
         
     def urlCheck(self):
@@ -46,18 +48,27 @@ class Video:
         self.driver.get(self.url)
         self.play()
     
-    def nickPs(self):
-        id = self.driver.find_element(By.XPATH,"/html/body/div[1]/div/main/section/div/form/fieldset/div[1]/div/input")
-        ps = self.driver.find_element(By.XPATH,"//*[@id='egpField']")
+    def login(self):
+
         while True:
-            id.send_keys(input("Tc kimlik no giriniz: "))
-            ps.send_keys(input("E-devlet şifrenizi giriniz: "))
+            id_input = self.driver.find_element(By.XPATH,"//*[@id='txtKullaniciAd']")
+            ps_input = self.driver.find_element(By.XPATH,"//*[@id='txtSifre']")
+            cap_input = self.driver.find_element(By.XPATH,"//*[@id='txtGuvenlikKod']")            
+            
+            cap_input.send_keys(input("Güvenlik kodunu giriniz\n:"))
+            id_input.send_keys(input("Mebbis kullanıcı adınızı giriniz:\n:"))
+            ps_input.send_keys(input("Mebbis şifrenizi giriniz\n:"))
+        
             if NoSuchElementException:
-                print("Yanlış tc veya şifre girdiniz.")
+                print("Yanlış giriş.")
+                self.driver.refresh()
+                sleep(3)
             else:
                 break
-        btn = self.driver.find_element(By.XPATH,"//*[@id='loginForm']/fieldset/div[5]/button[2]")
+
+        btn = self.driver.find_element(By.XPATH,"//*[@id='btnGiris']")
         btn.click()
+    
         
     def video(self):
         video = self.driver.find_element(By.XPATH,"/html/body/div/div/div[2]/div[2]")
@@ -95,9 +106,6 @@ class Video:
             self.urlCheck()
        
         self.play()
-        
-        
-        
 
 a = Video()
 a.app()
